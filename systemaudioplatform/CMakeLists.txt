@@ -17,32 +17,32 @@
 # limitations under the License.
 ################################################################################
 cmake_minimum_required(VERSION 3.3)
+project(systemaudioplatform VERSION 1.0.0 LANGUAGES CXX)
 
-
-list(APPEND CMAKE_MODULE_PATH
-        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
+set(LIBNAME systemaudioplatform)
+set(SRCS systemaudioplatform.cpp)
+set(DEFAULT_BUILD_TYPE "Release")
 
 find_package(PkgConfig REQUIRED) 
 
 pkg_check_modules(GSTREAMERBASE REQUIRED gstreamer-app-1.0)
 pkg_check_modules(GSTREAMER REQUIRED gstreamer-1.0)
 
-# find_package(GStreamer REQUIRED)
+add_library(${LIBNAME} SHARED ${SRCS})
 
-# Build system audio platform library
-set(Platform_SOURCES
-        systemaudioplatform.cpp
-   )
-add_library(systemaudioplatform  SHARED ${Platform_SOURCES})
+set_target_properties(${LIBNAME} PROPERTIES
+    VERSION ${PROJECT_VERSION}
+    SOVERSION 1
+    PUBLIC_HEADER systemaudioplatform.h
+)
 
+target_include_directories(${LIBNAME} PRIVATE ${GSTREAMER_INCLUDES})
+target_include_directories(${LIBNAME} PRIVATE ${GSTREAMERBASE_INCLUDE_DIRS})
 
+target_link_libraries(${LIBNAME} PRIVATE ${GSTREAMER_LIBRARIES})
+target_link_libraries(${LIBNAME} PRIVATE ${GSTREAMERBASE_LIBRARIES})
 
-target_include_directories(systemaudioplatform PRIVATE ${GSTREAMER_INCLUDES})
-target_include_directories(systemaudioplatform PRIVATE ${GSTREAMERBASE_INCLUDE_DIRS})
-
-target_link_libraries(systemaudioplatform PRIVATE ${GSTREAMER_LIBRARIES})
-target_link_libraries(systemaudioplatform PRIVATE ${GSTREAMERBASE_LIBRARIES})
-
-
-install(TARGETS systemaudioplatform LIBRARY DESTINATION lib)
-install(FILES systemaudioplatform.h DESTINATION include)
+install(TARGETS ${LIBNAME}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
