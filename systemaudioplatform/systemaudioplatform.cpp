@@ -22,7 +22,7 @@ bool systemAudioGeneratePipeline(GstElement *pipeline, GstElement *source,
                                  PlayMode mode, SourceType sourceType,
                                  bool smartVolumeEnable)
 {
-    return true;
+    return false;
 }
 
 void systemAudioSetThreshold(double thresHold)
